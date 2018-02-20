@@ -1,17 +1,27 @@
 <template>
   <div>
-    <h1>Register</h1>
-
     <div id="nameField">
-      <md-field>
-        <md-input placeholder="Type in your name here" v-model="name"></md-input>
-      </md-field>
+      <md-card>
+        <md-card-header>
+          <div class="md-title">Register</div>
+        </md-card-header>
 
-      <md-field>
-        <md-input placeholder="Type in your password here" v-model="password" type="password"></md-input>
-      </md-field>
+        <md-card-content>
+          <md-field>
+            <label>Name</label>
+            <md-input v-model="name"></md-input>
+          </md-field>
 
-      <md-button @click="register" id="submitButton" class="md-primary">Submit</md-button>
+          <md-field>
+            <label>Password</label>
+            <md-input v-model="password" type="password"></md-input>
+          </md-field>
+        </md-card-content>
+
+        <md-card-actions>
+          <md-button @click="register">Register</md-button>
+        </md-card-actions>
+      </md-card>
     </div>
   </div>
 </template>
@@ -27,11 +37,10 @@ export default {
   }),
   methods: {
     async register() {
-      const response = await authentication.register({
+      await authentication.register({
           name: this.name,
           password: this.password
       })
-      console.log(response.data)
     }
   }
 }
@@ -41,12 +50,6 @@ export default {
 #nameField {
   margin-left: 30vw;
   margin-right: 30vw;
-}
-h1 {
-  text-align: center;
-}
-#submitButton {
-  position: absolute;
-  left: 47%;
+  margin-top: 20vh;
 }
 </style>
