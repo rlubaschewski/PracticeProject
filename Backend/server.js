@@ -30,42 +30,43 @@ MongoClient.connect(url, function(err, db) {
 });
 
 app.post('/register', (req, res) => {
-    if(!req.body.name || !req.body.password) {
-        res.status(403)
-    } else {
-        MongoClient.connect(url, function(err, db) {
-            if(err) {
-                res.status(503).send(err)
-                console.log(err)
-            } 
-            else {
-                //checks if the user is already registered
-                db.collection('users').find({}).toArray(function(err, result) {
-                    if(err) {
-                        console.log(err)
-                        return res.status(503).send(err)
-                    } else {
-                        var userExists = true
-                        for(let i = 0; i < result.length; i++) {
-                            // user already exists
-                            if(result[i].name === req.body.name) {
-                                userExists = false
-                                return res.status(403).send(err)
-                            }
-                            if(!userExists) {
-                                //writes the new user into the collection
-                                db.collection('users').insertOne(req.body, function(err) {
-                                  if(err) {
-                                      console.log(err)
-                                      return res.status(503).send(err)
-                                  }
-                              })
-                              res.status(200)
-                              }
-                        }
-                    }
-                })
-            }
-        })
+    try {
+        if(!req.body.name || !req.body.password) {
+            res.sendStatus(403)
+            return
+         }
+         MongoClient.connect(url, function(err, db) {
+             if(err) {
+                 console.log(err)
+                 res.sendStatus(503)
+                 return   
+             } 
+     
+             //checks if the user is already registered
+             db.collection('users').find({}).toArray(function(err, result) {
+
+                 if(err)
+                 return res.sendStatus(503)
+
+                 for(let i = 0; i < result.length; i++) {
+                     // user already exists
+                     if(result[i].name === req.body.name)
+                     return res.sendStatus(403)
+                 }
+             })
+     
+                 //writes the new user into the collection
+                 db.collection('users').insertOne(req.body, function(err) {
+                     if(err) {
+                         console.log(err)
+                         return res.sendStatus(503)
+                     }
+                     res.sendStatus(200)
+                 })
+             })
+    }
+    catch(e) {
+        console.log(e)
+        res.sendStatus(500)
     }
 })
