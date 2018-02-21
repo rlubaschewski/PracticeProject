@@ -35,7 +35,7 @@ app.post('/register', (req, res) => {
             res.sendStatus(403)
             return
          }
-         MongoClient.connect(url, function(err, db) {
+        MongoClient.connect(url, function(err, db) {
              if(err) {
                  console.log(err)
                  res.sendStatus(503)
@@ -43,27 +43,24 @@ app.post('/register', (req, res) => {
              } 
      
              //checks if the user is already registered
-             db.collection('users').find({}).toArray(function(err, result) {
+             db.collection('users').findOne({name: req.body.name}, function(err, result) {
+                if(err)
+                    return res.sendStatus(503)
 
-                 if(err)
-                 return res.sendStatus(503)
-
-                 for(let i = 0; i < result.length; i++) {
-                     // user already exists
-                     if(result[i].name === req.body.name)
-                     return res.sendStatus(403)
-                 }
-             })
-     
-                 //writes the new user into the collection
-                 db.collection('users').insertOne(req.body, function(err) {
-                     if(err) {
-                         console.log(err)
-                         return res.sendStatus(503)
-                     }
-                     res.sendStatus(200)
-                 })
-             })
+                if(result)
+                    return res.sendStatus(403)
+                else {
+                    //writes the new user into the collection
+                    db.collection('users').insertOne(req.body, function(err) {
+                        if(err) {
+                            console.log(err)
+                            return res.sendStatus(503)
+                        }
+                        res.sendStatus(200)
+                    })
+                }
+            })
+        })
     }
     catch(e) {
         console.log(e)
