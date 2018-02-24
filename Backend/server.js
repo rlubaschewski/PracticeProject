@@ -31,7 +31,7 @@ MongoClient.connect(url, function(err, db) {
 
 app.post('/register', (req, res) => {
     try {
-        if(!req.body.name || !req.body.password) {
+        if(!req.body.username || !req.body.password || !req.body.name) {
             res.sendStatus(403)
             return
          }
@@ -43,7 +43,7 @@ app.post('/register', (req, res) => {
              } 
      
              //checks if the user is already registered
-             db.collection('users').findOne({name: req.body.name}, function(err, result) {
+             db.collection('users').findOne({username: req.body.username}, function(err, result) {
                 if(err)
                     return res.sendStatus(503)
 
@@ -59,6 +59,37 @@ app.post('/register', (req, res) => {
                         res.sendStatus(200)
                     })
                 }
+            })
+        })
+    }
+    catch(e) {
+        console.log(e)
+        res.sendStatus(500)
+    }
+})
+
+app.post('/login', (req, res) => {
+    try {
+        if(!req.body.username || !req.body.password) {
+            res.sendStatus(403)
+            return
+        }
+
+        MongoClient.connect(url, function(err, db) {
+            if(err) {
+                console.log(err)
+                res.sendStatus(503)
+                return   
+            }
+        
+            db.collection('users').findOne({username: req.body.username}, function(err, result) {
+                if(err)
+                    return res.sendStatus(503)
+
+                if(result)
+                    res.sendStatus(200)
+                else
+                    return res.sendStatus(403)
             })
         })
     }
