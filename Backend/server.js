@@ -98,3 +98,29 @@ app.post('/login', (req, res) => {
         res.sendStatus(500)
     }
 })
+
+app.get('/articles', (req, res) => {
+    try {
+        MongoClient.connect(url, function(err, db) {
+            if(err) {
+                console.log(err)
+                res.sendStatus(503)
+                return   
+            }
+
+            db.collection('articles').find({}).toArray(function(err, result) {
+                if(err)
+                    return res.sendStatus(503)
+                else {
+                    res.status(200).json(result)
+                    console.log('articles')
+                }
+                    
+            })
+        })
+    }
+    catch(e) {
+        console.log(e)
+        res.sendStatus(500)
+    }
+})

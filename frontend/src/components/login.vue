@@ -7,20 +7,22 @@
         </md-card-header>
 
         <md-card-content>
-          <md-field>
+          <md-field :class="getValidationClass('username')">
             <label>Username</label>
             <md-input v-model="username"></md-input>
+            <span class="md-error" v-if="!$v.username.required">Username is required</span>
           </md-field>
 
-          <md-field>
+          <md-field :class="getValidationClass('password')">
             <label>Password</label>
             <md-input v-model="password" type="password"></md-input>
+            <span class="md-error" v-if="!$v.password.required">Password is required</span>
           </md-field>
         </md-card-content>
 
         <md-card-actions>
           <small id="login" @click="register">Don't have an Account? Sign up!</small>
-          <md-button @click="login">Login</md-button>
+          <md-button @click="validateUser">Login</md-button>
         </md-card-actions>
       </md-card>
     </div>
@@ -28,32 +30,43 @@
 </template>
 
 <script>
+import { required } from 'vuelidate/lib/validators'
 
 export default {
   name: 'login',
+  data: () => ({
+    username: null,
+    password: null
+  }),
+  validations: {
+    username: {
+      required
+    },
+    password: {
+      required
+    }
+  },
   methods: {
     login() {
-      this.$store.dispatch('login')
+      this.$store.dispatch('login', {username: this.username, password: this.password})
     },
     register() {
         this.$router.push('/register')
-    }
-  },
-  computed: {
-    username: {
-      get() {
-        return this.$store.state.username
-      },
-      set(val) {
-        this.$store.commit('setUsername', val)
+    },
+    getValidationClass (fieldName) {
+      const field = this.$v[fieldName]
+
+      if (field) {
+        return {
+          'md-invalid': field.$invalid && field.$dirty
+        }
       }
     },
-    password: {
-      get() {
-        return this.$store.state.password
-      },
-      set(val) {
-        this.$store.commit('setPassword', val)
+    validateUser () {
+      this.$v.$touch()
+
+      if (!this.$v.$invalid) {
+        this.login()
       }
     }
   }

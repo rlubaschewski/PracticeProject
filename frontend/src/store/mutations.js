@@ -1,18 +1,10 @@
-import router from '../router'
 export default {
-    login: (state, response) => {
-        localStorage.setItem('username', state.username)
-        if(response.status === 200) {
-            router.push('/tabs')
+    getArticles: (state, response) => {
+        for(let i = 0; i < response.data.length; i++) {
+            state.articles.push({
+                _id: response.data[i]._id,
+                title: response.data[i].title
+            })
         }
-    },
-    setName: (state, val) => {
-        state.name = val
-    },
-    setUsername: (state, val) => {
-        state.username = val
-    },
-    setPassword: (state, val) => {
-        state.password = val
     }
 }

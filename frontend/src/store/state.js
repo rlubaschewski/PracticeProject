@@ -1,5 +1,6 @@
 export default {
     name: null,
     username: null,
-    password: null
+    password: null,
+    articles: []
 }
