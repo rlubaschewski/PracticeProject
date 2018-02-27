@@ -2,7 +2,6 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import register from '@/components/register'
 import login from '@/components/login'
-import home from '@/components/home'
 import articles from '@/components/articles'
 import createArticle from '@/components/createArticle'
 
@@ -26,7 +25,7 @@ export default new Router({
       component: articles
     },
     {
-      path: '/create',
+      path: '/create/:user',
       name: 'Create',
       component: createArticle
     }

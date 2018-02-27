@@ -142,7 +142,7 @@ app.get('/articles/:sub', (req, res) => {
         res.sendStatus(500)
     }
 })
-app.post('/create', (req, res) => {
+app.post('/create:user', (req, res) => {
     try {
         MongoClient.connect(url, function(err, db) {
             if(err) {
@@ -150,15 +150,24 @@ app.post('/create', (req, res) => {
                 res.sendStatus(503)
                 return   
             } else {
-                db.collection('articles').insertOne(req.body, function(err) {
-                    if(err) {
-                        console.log(err)
+                // user does not exist, can't create any articles
+                db.collection('users').findOne({username: req.params.user}, function(err, result) {
+                    if(err)
                         return res.sendStatus(503)
+    
+                    if(result) {
+                        db.collection('articles').insertOne(req.body, function(err) {
+                            if(err) {
+                                console.log(err)
+                                return res.sendStatus(503)
+                            }
+                            res.sendStatus(200)
+                        })
                     }
-                    res.sendStatus(200)
+                    else
+                        return res.sendStatus(403)
                 })
             }
-
         })
     }
     catch(e) {

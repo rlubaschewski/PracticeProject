@@ -10,7 +10,8 @@ export default {
             password: data.password}).then(function(response) {
                 if(response.status === 200) {
                     localStorage.setItem('username', data.username)
-                    router.push('/')
+                    localStorage.setItem('show', true)
+                    router.push('/articles/all')
                 }
             })
     },
@@ -20,6 +21,7 @@ export default {
             password: data.password}).then(function(response) {
                 if(response.status === 200) {
                     localStorage.setItem('username', data.username)
+                    localStorage.setItem('show', true)
                     router.push('/articles/all')
                 }
             })
@@ -28,10 +30,11 @@ export default {
         axios.get(url + '/articles/' + sub).then(function(response) {
             context.commit('clearArticles')
             context.commit('getArticles', response)
+            router.push('/articles/' + sub)
         })
     },
     createArticle: (context, data) => {
-        axios.post(url + '/create', {
+        axios.post(url + '/create' + localStorage.getItem('username'), {
             user: localStorage.getItem('username'),
             sub: data.sub,
             title: data.title,

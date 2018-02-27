@@ -12,5 +12,8 @@ export default {
     },
     clearArticles: (state) => {
         state.articles = []
+    },
+    setShow: (state, val) => {
+        state.show = val
     }
 }

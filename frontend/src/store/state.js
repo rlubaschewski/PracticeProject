@@ -2,5 +2,6 @@ export default {
     name: null,
     username: null,
     password: null,
-    articles: []
+    articles: [],
+    show: false
 }

@@ -1,15 +1,10 @@
 <template>
   <div>
-    <md-toolbar class="md-primary" md-elevation="0">
-      <h3 class="md-title" style="flex: 1">PracticeProject</h3>
-      <md-button>Logout</md-button>
-    </md-toolbar>
-
-    <md-card v-for="article in articles" v-bind:key="article._id">
+    <md-card v-for="article in articles" v-bind:key="article._id" id="article">
       <md-card-header>
         <md-card-header-text>
           <div class="md-title">{{article.title}}</div>
-          <div class="md-subhead">Submitted by <i class="subhead">{{article.user}}</i> to <i class="subhead">{{article.sub}}</i></div>
+          <div class="md-subhead">Submitted by <i class="subhead">{{article.user}}</i> to <i @click="getSubArticles(article.sub)" class="subhead">{{article.sub}}</i></div>
         </md-card-header-text>
       </md-card-header>
 
@@ -19,7 +14,7 @@
     </md-card>
 
       <md-speed-dial class="md-bottom-right">
-        <md-speed-dial-target class="md-primary" to="/create">
+        <md-speed-dial-target class="md-primary" @click="createRoute">
           <md-icon>add</md-icon>
         </md-speed-dial-target>
       </md-speed-dial>
@@ -31,6 +26,12 @@ export default {
   methods: {
     getAllArticles() {
       this.$store.dispatch('getArticles', 'all')
+    },
+    getSubArticles(sub) {
+      this.$store.dispatch('getArticles', sub)
+    },
+    createRoute() {
+      this.$router.push('/create/' + localStorage.getItem('username'))
     }
   },
   computed: {
@@ -41,7 +42,9 @@ export default {
     }
   },
   beforeMount() {
-    this.getAllArticles()
+    let url = '' + window.location
+    let sub = url.slice(33)
+    this.getSubArticles(sub)
   }
 }
 </script>
@@ -57,5 +60,8 @@ export default {
 }
 .subhead:hover {
   font-weight: bold;
+}
+#article {
+  margin-bottom: 1%;
 }
 </style>
