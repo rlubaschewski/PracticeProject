@@ -99,24 +99,66 @@ app.post('/login', (req, res) => {
     }
 })
 
-app.get('/articles', (req, res) => {
+app.get('/articles/:sub', (req, res) => {
     try {
+        let sub = req.params.sub;
+        // No JSON or no sub.
+        if (!typeof req.body === 'object' || !sub) {
+            res.sendStatus(400);
+            return;
+        }
         MongoClient.connect(url, function(err, db) {
             if(err) {
                 console.log(err)
                 res.sendStatus(503)
                 return   
             }
+            //gets all articles from the database
+            if(sub === 'all') {
+                db.collection('articles').find({}).toArray(function(err, result) {
+                    if(err)
+                        return res.sendStatus(503)
+                    else {
+                        res.status(200).json(result)
+                    }
+                        
+                })
+            }
+            //gets all articles from a specific sub
+            else {
+                db.collection('articles').find({sub: sub}).toArray(function(err, result) {
+                    if(err)
+                        return res.sendStatus(503)
+                    else {
+                        res.status(200).json(result)
+                    }
+                        
+                })
+            }
+        })
+    }
+    catch(e) {
+        console.log(e)
+        res.sendStatus(500)
+    }
+})
+app.post('/create', (req, res) => {
+    try {
+        MongoClient.connect(url, function(err, db) {
+            if(err) {
+                console.log(err)
+                res.sendStatus(503)
+                return   
+            } else {
+                db.collection('articles').insertOne(req.body, function(err) {
+                    if(err) {
+                        console.log(err)
+                        return res.sendStatus(503)
+                    }
+                    res.sendStatus(200)
+                })
+            }
 
-            db.collection('articles').find({}).toArray(function(err, result) {
-                if(err)
-                    return res.sendStatus(503)
-                else {
-                    res.status(200).json(result)
-                    console.log('articles')
-                }
-                    
-            })
         })
     }
     catch(e) {

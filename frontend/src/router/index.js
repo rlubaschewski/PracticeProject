@@ -4,6 +4,7 @@ import register from '@/components/register'
 import login from '@/components/login'
 import home from '@/components/home'
 import articles from '@/components/articles'
+import createArticle from '@/components/createArticle'
 
 Vue.use(Router);
 
@@ -20,9 +21,14 @@ export default new Router({
       component: login,
     },
     {
-      path: '/articles',
+      path: '/articles/:sub',
       name: 'Articles',
       component: articles
+    },
+    {
+      path: '/create',
+      name: 'Create',
+      component: createArticle
     }
   ],
 });
